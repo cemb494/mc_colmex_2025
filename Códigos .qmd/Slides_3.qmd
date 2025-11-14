@@ -1,0 +1,170 @@
+---
+title: "Lab 3 - .qmd, gráficas, leer"
+subtitle: "Métodos Cuantitativos"
+author: "Carlos Eduardo Molina Berumen"
+institute: "El Colegio de México"
+lang: es
+date: today
+date-format: long
+echo: TRUE
+message: FALSE
+warning: FALSE
+format:
+  beamer:
+    theme: AnnArbor
+    colortheme: default
+    header-includes: |
+      % --- Definir colores Colmex ---
+      \definecolor{colmexred}{HTML}{7A0019}
+      \definecolor{colmexgold}{HTML}{C5A46D}
+      \definecolor{colmexgray}{HTML}{2E2E2E}
+      \definecolor{colmexlight}{HTML}{F2F2F2}
+
+      % --- Sobrescribir paletas del theme ---
+      \setbeamercolor{palette primary}{fg=white,bg=colmexred}
+      \setbeamercolor{palette secondary}{fg=white,bg=colmexgray}
+      \setbeamercolor{palette tertiary}{fg=white,bg=colmexgold}
+      \setbeamercolor{palette quaternary}{fg=white,bg=colmexlight}
+
+      \setbeamercolor{frametitle}{fg=white,bg=colmexred}
+      \setbeamercolor{title}{fg=colmexgold}
+      \setbeamercolor{structure}{fg=colmexred}
+      \setbeamercolor{block title}{fg=white,bg=colmexred}
+      \setbeamercolor{block body}{fg=colmexgray,bg=colmexlight}
+      \setbeamercolor{item}{fg=colmexgold}
+
+      % --- Colores de la portada ---
+      \setbeamercolor{titlelike}{fg=white, bg=colmexred}
+      \setbeamercolor{title page}{fg=colmexred,bg=white}
+      \setbeamercolor{title page title}{fg=colmexred}
+      \setbeamercolor{subtitle}{fg=colmexgold}
+      \setbeamercolor{author}{fg=colmexgray}
+      \setbeamercolor{institute}{fg=colmexgray}
+      \setbeamercolor{date}{fg=colmexgray}
+
+      % --- Logo en la portada ---
+      \titlegraphic{\includegraphics[width=3cm]{Colmex_logo.jpeg}}
+
+      % --- Footer personalizado con franjas redistribuidas ---
+      \makeatletter
+      \defbeamertemplate*{footline}{custom in head/foot}{
+        \leavevmode
+        \hbox{%
+          \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.5ex,dp=1.5ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.5ex,dp=1.5ex,center]{title in head/foot}%
+            \usebeamerfont{title in head/foot}\insertshorttitle
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1.5ex,right]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}%
+          \end{beamercolorbox}%
+        }%
+        \vskip0pt
+      }
+      \makeatother
+---
+## Objetivos
+ - Usar nuestros propios datos
+ - Aprender a usar gráficas 
+ - Entender .qmd
+ 
+---
+
+Hemos visto cómo se usan los datos ya precargados en R, pero ¿Cómo uso mis propios datos?
+
+Debemos enseñarle a R a leer archivos con datos. 
+
+
+---
+
+Descarguen en su computadora el archivo "Estados.csv", guárdenlo en la carpeta donde está su proyecto.
+
+¿Qué es un archivo .csv? 
+
+---
+
+```{r}
+##install.packages(readr)
+
+library(readr)
+
+data <- read_csv("Estados.csv")
+```
+
+---
+
+- ¿Qué datos contiene esta tabla?
+- ¿Cuántas variables tiene?
+- ¿Cuántas observaciones?
+- ¿Qué valores puede tomar la variable "Entidad federativa"
+
+---
+
+```{r}
+ncol(data)
+nrow(data)
+unique(data$`Entidad federativa`)
+```
+
+---
+
+Intentemos sacar el promedio de años de escolaridad de la población mexicana incluyendo todos los años. 
+
+```{r}
+prom_escolaridad <- mean(data$Años_escolaridad_15)
+```
+¿Qué sucedió?
+
+---
+
+Ahora intenten este código 
+
+```{r}
+prom_escolaridad <- mean(data$Años_escolaridad_15, na.rm= TRUE)
+```
+
+Interpreten el resultado.
+
+---
+
+Como ya vimos, data contiene datos de muchos años. Creemos una nueva base con solo dtaos de 2020.
+
+```{r}
+library(dplyr)
+
+data2020 <- data %>% 
+  filter(Año == "2020")
+```
+
+---
+
+¿Cuál es el estado con la escolaridad máxima? ¿Cuántos años son lo máximo?
+
+```{r}
+max(data2020$Años_escolaridad_15)
+
+data2020 %>%
+  filter(Años_escolaridad_15 == max(Años_escolaridad_15))
+```
+
+¿Cuál es la moda de la variable Edad_mediana?
+
+```{r}
+library(modeest)
+mlv(data2020$Edad_mediana, method = "mfv")
+```
+
+---
+
+Hágamos una serie de gráficas sobre nuestros datos.
+
+```{r}
+
+as.numeric(data2020$Edad_mediana)
+
+hist(data2020$Edad_mediana, 
+     xlab = "Edad",
+     ylab = "FRecuencia")
+```
+

@@ -1,0 +1,192 @@
+---
+title: "Laboratorio 5 - Regresión lineal"
+subtitle: "Métodos Cuantitativos"
+author: "Carlos Eduardo Molina Berumen"
+institute: "El Colegio de México"
+lang: es
+date: today
+date-format: long
+echo: TRUE
+message: FALSE
+warning: FALSE
+format:
+  beamer:
+    theme: AnnArbor
+    colortheme: default
+    header-includes: |
+      % --- Definir colores Colmex ---
+      \definecolor{colmexred}{HTML}{7A0019}
+      \definecolor{colmexgold}{HTML}{C5A46D}
+      \definecolor{colmexgray}{HTML}{2E2E2E}
+      \definecolor{colmexlight}{HTML}{F2F2F2}
+
+      % --- Sobrescribir paletas del theme ---
+      \setbeamercolor{palette primary}{fg=white,bg=colmexred}
+      \setbeamercolor{palette secondary}{fg=white,bg=colmexgray}
+      \setbeamercolor{palette tertiary}{fg=white,bg=colmexgold}
+      \setbeamercolor{palette quaternary}{fg=white,bg=colmexlight}
+
+      \setbeamercolor{frametitle}{fg=white,bg=colmexred}
+      \setbeamercolor{title}{fg=colmexgold}
+      \setbeamercolor{structure}{fg=colmexred}
+      \setbeamercolor{block title}{fg=white,bg=colmexred}
+      \setbeamercolor{block body}{fg=colmexgray,bg=colmexlight}
+      \setbeamercolor{item}{fg=colmexgold}
+
+      % --- Colores de la portada ---
+      \setbeamercolor{titlelike}{fg=white, bg=colmexred}
+      \setbeamercolor{title page}{fg=colmexred,bg=white}
+      \setbeamercolor{title page title}{fg=colmexred}
+      \setbeamercolor{subtitle}{fg=colmexgold}
+      \setbeamercolor{author}{fg=colmexgray}
+      \setbeamercolor{institute}{fg=colmexgray}
+      \setbeamercolor{date}{fg=colmexgray}
+
+      % --- Logo en la portada ---
+      \titlegraphic{\includegraphics[width=3cm]{Colmex_logo.jpeg}}
+
+      % --- Footer personalizado con franjas redistribuidas ---
+      \makeatletter
+      \defbeamertemplate*{footline}{custom in head/foot}{
+        \leavevmode
+        \hbox{%
+          \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.5ex,dp=1.5ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.5ex,dp=1.5ex,center]{title in head/foot}%
+            \usebeamerfont{title in head/foot}\insertshorttitle
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1.5ex,right]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}%
+          \end{beamercolorbox}%
+        }%
+        \vskip0pt
+      }
+      \makeatother
+---
+
+# Regresión líneal 
+
+Concepto básico:  
+
+$$\text{y} = \beta_{1} + \beta_{2}\cdot\text{x} + \text{error}.$$
+
+---
+
+# Objetivo de hoy:
+
+Entender una regresión lineal. Por ejemplo, Queremos ver si los pingüinos con aletas más largas tienden a pesar más.
+
+
+---
+
+**Carguemos los datos y un par de librerías**
+
+```{r}
+#install.packages("palmerpenguins"), lo mismo con el resto
+
+library(palmerpenguins)
+library(ggplot2)
+library(stargazer)
+
+```
+
+---
+
+**Exploremos los datos**
+
+```{r, out.width ="70%"}
+head(penguins)
+
+```
+
+---
+
+Hay una forma sencilla de sacar la estadística descriptiva.
+
+```{r, out.width="70%"}
+summary(penguins)
+```
+
+---
+
+Veamos cómo se mueven nuestras variables juntas
+
+```{r}
+# Quitamos los NA para evitar errores
+penguins_clean <- na.omit(penguins)
+
+# Covarianza entre masa corporal y longitud de aleta
+cov(penguins_clean$body_mass_g, 
+    penguins_clean$flipper_length_mm)
+```
+
+
+---
+
+Veamos si nuestras variables siguen una distribución normal: 
+
+```{r}
+shapiro.test(penguins_clean$body_mass_g)
+shapiro.test(penguins_clean$flipper_length_mm)
+```
+Los datos no están normalmente distribuidos. 
+
+---
+
+Hagamos un modelo de regresión líneal:
+
+```{r, out.width="70%"}
+m1 <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+summary(m1)
+```
+
+---
+
+
+**Podemos hacerlo mejor**
+
+```{r, out.width="70%"}
+stargazer(m1, type = "text")
+```
+
+---
+
+# ¿Cómo se vería esto en una fórmula?
+
+
+$$
+\text{Body Mass}_i = -5780.81 \;+\; 49.686\,(\text{Flipper Length}_i) \;+\; \varepsilon_i
+$$
+¿Cómo interpretamos eso?
+
+
+---
+
+Grafiquemos nuestros datos
+
+```{r}
+p1 <- ggplot(penguins, aes(x = flipper_length_mm, 
+                           y = body_mass_g)) +
+  geom_point(color = "steelblue") +
+  geom_smooth(method = "lm", se = FALSE, 
+              color = "red", lwd = 1.2) +
+  labs(title = "Regresión entre peso y longitud de aleta",
+       x = "Longitud de aleta (mm)", 
+       y = "Masa corporal (g)",
+        caption = "Fuente: Palmer Archipielago Penguin Data") +
+  theme(
+    plot.title=element_text(size=14, face="bold"),
+    plot.subtitle=element_text(size=8),
+    plot.caption=element_text(size=6),
+    axis.title=element_text(size=8),
+    axis.text=element_text(size=8)
+)
+```
+
+---
+
+```{r, out.width="70%"}
+print(p1)
+```
+

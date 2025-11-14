@@ -1,0 +1,175 @@
+---
+title: "Laboratorio 2 - Niveles, Bases de datos, .qmd"
+subtitle: "Métodos Cuantitativos"
+author: "Carlos Eduardo Molina Berumen"
+institute: "El Colegio de México"
+lang: es
+date: today
+date-format: long
+echo: TRUE
+message: FALSE
+warning: FALSE
+format:
+  beamer:
+    theme: AnnArbor
+    colortheme: default
+    header-includes: |
+      % --- Definir colores Colmex ---
+      \definecolor{colmexred}{HTML}{7A0019}
+      \definecolor{colmexgold}{HTML}{C5A46D}
+      \definecolor{colmexgray}{HTML}{2E2E2E}
+      \definecolor{colmexlight}{HTML}{F2F2F2}
+
+      % --- Sobrescribir paletas del theme ---
+      \setbeamercolor{palette primary}{fg=white,bg=colmexred}
+      \setbeamercolor{palette secondary}{fg=white,bg=colmexgray}
+      \setbeamercolor{palette tertiary}{fg=white,bg=colmexgold}
+      \setbeamercolor{palette quaternary}{fg=white,bg=colmexlight}
+
+      \setbeamercolor{frametitle}{fg=white,bg=colmexred}
+      \setbeamercolor{title}{fg=colmexgold}
+      \setbeamercolor{structure}{fg=colmexred}
+      \setbeamercolor{block title}{fg=white,bg=colmexred}
+      \setbeamercolor{block body}{fg=colmexgray,bg=colmexlight}
+      \setbeamercolor{item}{fg=colmexgold}
+
+      % --- Colores de la portada ---
+      \setbeamercolor{titlelike}{fg=white, bg=colmexred}
+      \setbeamercolor{title page}{fg=colmexred,bg=white}
+      \setbeamercolor{title page title}{fg=colmexred}
+      \setbeamercolor{subtitle}{fg=colmexgold}
+      \setbeamercolor{author}{fg=colmexgray}
+      \setbeamercolor{institute}{fg=colmexgray}
+      \setbeamercolor{date}{fg=colmexgray}
+
+      % --- Logo en la portada ---
+      \titlegraphic{\includegraphics[width=3cm]{Colmex_logo.jpeg}}
+
+      % --- Footer personalizado con franjas redistribuidas ---
+      \makeatletter
+      \defbeamertemplate*{footline}{custom in head/foot}{
+        \leavevmode
+        \hbox{%
+          \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.5ex,dp=1.5ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.5ex,dp=1.5ex,center]{title in head/foot}%
+            \usebeamerfont{title in head/foot}\insertshorttitle
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1.5ex,right]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}%
+          \end{beamercolorbox}%
+        }%
+        \vskip0pt
+      }
+      \makeatother
+---
+
+# Repaso
+
+Variables:
+  - texto
+  - numéricas
+  - lógicas
+  
+----
+
+¿Qué hace el siguiente código?
+
+```{r}
+library(fivethirtyeight)
+
+trump <- trumpworld_issues
+
+```
+
+¿Cómo saber qué tipo de variable es una de las variables de mi bdd?
+```{r}
+class(trump$approve)
+```
+
+---
+
+Creemos una nueva variable.
+
+Si en un país la aprobación sobre un issue de trump es mayor a 0, hagamos una variable lógica. 
+
+```{r}
+trump$liked <- (trump$net_approval > 0)
+```
+
+---
+
+Hágamos más cosas con las bases de datos. ¿Qué nos dice esta tabla?
+```{r}
+library(dplyr)
+count(trump, liked)
+```
+
+---
+
+# dplyr: gramática nueva para R
+
+Imaginemos que queremos saber cual es la aprovación neta media del issue 2 según mi base de datos. Usaríamos algo así:
+
+```{r}
+wall_approval <- mean(trump$net_approval[trump$issue == "1"], na.rm = TRUE)
+wall_approval
+```
+---
+
+Podríamos hacerlo más sencillo utilizando pipas: 
+
+- %>% (command + shift + m)
+
+---
+
+Una pipa ( %>% ) sirve para encadenar pasos sin repetir el nombre de tu base de datos.
+
+Es como decirle a R:
+
+“Toma esto, y luego hazle esto otro, y luego esto otro…”
+
+Así lees el código como una receta en orden, en vez de escribir la base una y otra vez.
+
+---
+
+Creemos un nuevo objeto del issue 1
+
+```{r}
+approval_issue <- trump %>% 
+  group_by(issue) %>% 
+  summarise(media_aprobacion = mean(net_approval, na.rm = TRUE))
+
+```
+
+---
+
+Recordemos
+
+```{r, eval = F}
+x <- c(1, 2, 2, 3, 3, 3, 4)
+mean()
+
+median()
+
+library(modeest)
+mlv(x, method = "mfv")  
+
+var()
+```
+ 
+---
+Niveles
+
+```{r}
+aprobacion <- c("Mucho", "Poco", "Nada")
+
+aprobacion <- as.factor(aprobacion)
+aprobacion
+
+aprobacion1 <- factor(aprobacion,
+                     levels = c("Mucho", "Poco", "Nada"))
+
+```
+

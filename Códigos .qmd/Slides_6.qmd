@@ -1,0 +1,260 @@
+---
+title: "Laboratorio 6 - Asociación, tablas, loops y limpieza de datos"
+subtitle: "Métodos Cuantitativos"
+author: "Carlos Eduardo Molina Berumen"
+institute: "El Colegio de México"
+lang: es
+date: today
+date-format: long
+echo: TRUE
+message: FALSE
+warning: FALSE
+format:
+  beamer:
+    theme: AnnArbor
+    colortheme: default
+    header-includes: |
+      % --- Definir colores Colmex ---
+      \definecolor{colmexred}{HTML}{7A0019}
+      \definecolor{colmexgold}{HTML}{C5A46D}
+      \definecolor{colmexgray}{HTML}{2E2E2E}
+      \definecolor{colmexlight}{HTML}{F2F2F2}
+
+      % --- Sobrescribir paletas del theme ---
+      \setbeamercolor{palette primary}{fg=white,bg=colmexred}
+      \setbeamercolor{palette secondary}{fg=white,bg=colmexgray}
+      \setbeamercolor{palette tertiary}{fg=white,bg=colmexgold}
+      \setbeamercolor{palette quaternary}{fg=white,bg=colmexlight}
+
+      \setbeamercolor{frametitle}{fg=white,bg=colmexred}
+      \setbeamercolor{title}{fg=colmexgold}
+      \setbeamercolor{structure}{fg=colmexred}
+      \setbeamercolor{block title}{fg=white,bg=colmexred}
+      \setbeamercolor{block body}{fg=colmexgray,bg=colmexlight}
+      \setbeamercolor{item}{fg=colmexgold}
+
+      % --- Colores de la portada ---
+      \setbeamercolor{titlelike}{fg=white, bg=colmexred}
+      \setbeamercolor{title page}{fg=colmexred,bg=white}
+      \setbeamercolor{title page title}{fg=colmexred}
+      \setbeamercolor{subtitle}{fg=colmexgold}
+      \setbeamercolor{author}{fg=colmexgray}
+      \setbeamercolor{institute}{fg=colmexgray}
+      \setbeamercolor{date}{fg=colmexgray}
+
+      % --- Logo en la portada ---
+      \titlegraphic{\includegraphics[width=3cm]{Colmex_logo.jpeg}}
+
+      % --- Footer personalizado con franjas redistribuidas ---
+      \makeatletter
+      \defbeamertemplate*{footline}{custom in head/foot}{
+        \leavevmode
+        \hbox{%
+          \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.5ex,dp=1.5ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.5ex,dp=1.5ex,center]{title in head/foot}%
+            \usebeamerfont{title in head/foot}\insertshorttitle
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1.5ex,right]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}%
+          \end{beamercolorbox}%
+        }%
+        \vskip0pt
+      }
+      \makeatother
+---
+
+# Repaso
+
+Ya sabemos como:
+
+-   Hacer una regresión lineal
+-   Gráficar una regresión lineal
+-   Buscar la covarianza de dos variables.
+
+# En este lab aprenderemos:
+
+-   Más medidas de asociación
+-   Cómo hacer tablas de contingencia
+-   Cómo hacer loops
+-   Cómo limpiar bases de datos
+
+# Explicación conceptual
+
+**Covanrianza**: cómo dos variables numéricas varían juntas. No estandarizada.
+
+**Coeficiente de determinación R^2^**: qué proporción de la variación de la VD es explicada por la VI. Nos la da la regresión lineal.
+
+**Coeficiente de correlación de Pearson**: es una versión estandarizada de la covarianza que va de -1 a 1.
+
+**Chi cuadrada $\chi^2$**: se usa para ver si dos variables categóricas están relacionadas o son independientes.
+
+## Coeficiente de Pearson: 
+
+```{r}
+library(palmerpenguins)
+library(stargazer)
+penguins <- na.omit(penguins)
+```
+
+---
+
+```{r}
+
+cor.test(penguins$bill_length_mm, penguins$body_mass_g, 
+         method = "pearson")
+
+```
+Hay una relación positiva moderada-fuerte y estadísticamente significativa.
+
+También se puede usar cor(), peo cor.test() les da una relación más completa. 
+---
+
+# Chi cuadrada $\chi^2$
+
+**Recordatorio:** La chi cuadrada $\chi^2$ mide la relación entre dos variables categóricas. No numéricas. 
+
+Primer paso, hacer una tabla de contingencia. 
+
+## Tabla de contingencia
+
+Tabla en forma de matriz que organiza dos o más variables categóricas. Ella mide la **frecuencia** de la combinación de los cruces entre cada categoría.
+
+```{r}
+tabla <- table(penguins$species, penguins$island)
+tabla
+```
+
+---
+
+```{r}
+objeto <- chisq.test(tabla)
+
+stargazer(objeto, type = "text")
+```
+Hay relación estadísticamente significativa entre las variables.
+
+---
+
+# Parte dos: loops
+
+Los loops son una herramienta muy útil para evitar tareas repetitivas en r. En lugar de pedirle a r que imprima el cuadrado de cada entero del uno al cinco por separado, lo podemos hacer en un solo comando. 
+
+```{r}
+for (i in 1:5) {
+  print(i**2)
+}
+
+```
+
+---
+
+Hagámos un loop más interesante:
+
+
+```{r}
+library(fivethirtyeight)
+data <- airline_safety
+
+for (i in 1:nrow(data)) {
+  aerolinea <- data$airline[i]
+  fatalidades <- data$fatalities_00_14[i]
+  
+  if (fatalidades > 0) {
+    cat("La aerolínea", aerolinea, "tuvo", fatalidades,
+        "fatalidades entre el 2000 y el 2014.\n")
+  }
+}
+
+```
+
+# Parte 3: limpiar datos.
+
+```{r}
+library(ggplot2)
+economics <- economics
+```
+
+---
+
+# Seleccionar columnas
+
+```{r}
+library(dplyr)
+unemployment <- select(economics, date, unemploy, psavert)
+head(unemployment, n= 2)
+
+
+```
+
+---
+
+```{r}
+df1 <- select(economics, date:pop)
+head(df1, n = 2)
+
+df2 <- select(economics, starts_with("p"))
+head(df2, n = 2)
+
+```
+# Quitar columnas
+
+```{r}
+df3 <- select(economics, -c(pop, uempmed))
+head(df3)
+```
+
+# Pivot longer (table ancha a tabla larga)
+
+Sirve para crear una nueva variable "indicator" que contenga los datos de personal consumption expenditures, personal servings rate y number of unemployed in thousands. 
+
+```{r}
+#install.packages("tidyr")
+library(tidyr)
+
+df4<- pivot_longer(
+  economics,
+  cols = c(pce, psavert, unemploy),
+  names_to = "indicator", values_to = "value")
+
+```
+
+---
+
+```{r}
+head(df4) 
+```
+
+# Pivot wider (tabla larga a tabla ancha)
+
+Proceso inverso a pivot longer. Sirve para que ahora nuestra columna "indicator" y "values" se conviertan en columnas "pce", "psavert", "unemploy".
+
+```{r}
+df5 <- pivot_wider(
+  df4,
+  names_from = indicator,
+  values_from = value
+)
+```
+
+---
+
+```{r}
+head(df5)
+```
+
+# En suma 
+
+- **Extraer columnas:**	select(col1, col2)	
+- **Quitar columnas:**	select(-col)	
+- **De ancho a largo:**	pivot_longer()
+- **De largo a ancho:**	pivot_wider()
+
+---
+
+Muchas gracias a todas!!! :)))
+
+eduardo.molina@alumnos.cide.edu
+
+carlos.e.molinaberumen@outlook.com

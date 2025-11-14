@@ -1,0 +1,358 @@
+---
+title: "Laboratorio 1 - Introducción a R"
+subtitle: "Métodos Cuantitativos"
+author: "Carlos Eduardo Molina Berumen"
+institute: "El Colegio de México"
+lang: es
+date: 10/03/2025
+date-format: long
+echo: TRUE
+message: FALSE
+warning: FALSE
+format:
+  beamer:
+    theme: AnnArbor
+    colortheme: default
+    header-includes: |
+      % --- Definir colores Colmex ---
+      \definecolor{colmexred}{HTML}{7A0019}
+      \definecolor{colmexgold}{HTML}{C5A46D}
+      \definecolor{colmexgray}{HTML}{2E2E2E}
+      \definecolor{colmexlight}{HTML}{F2F2F2}
+
+      % --- Sobrescribir paletas del theme ---
+      \setbeamercolor{palette primary}{fg=white,bg=colmexred}
+      \setbeamercolor{palette secondary}{fg=white,bg=colmexgray}
+      \setbeamercolor{palette tertiary}{fg=white,bg=colmexgold}
+      \setbeamercolor{palette quaternary}{fg=white,bg=colmexlight}
+
+      \setbeamercolor{frametitle}{fg=white,bg=colmexred}
+      \setbeamercolor{title}{fg=colmexgold}
+      \setbeamercolor{structure}{fg=colmexred}
+      \setbeamercolor{block title}{fg=white,bg=colmexred}
+      \setbeamercolor{block body}{fg=colmexgray,bg=colmexlight}
+      \setbeamercolor{item}{fg=colmexgold}
+
+      % --- Colores de la portada ---
+      \setbeamercolor{titlelike}{fg=white, bg=colmexred}
+      \setbeamercolor{title page}{fg=colmexred,bg=white}
+      \setbeamercolor{title page title}{fg=colmexred}
+      \setbeamercolor{subtitle}{fg=colmexgold}
+      \setbeamercolor{author}{fg=colmexgray}
+      \setbeamercolor{institute}{fg=colmexgray}
+      \setbeamercolor{date}{fg=colmexgray}
+
+      % --- Logo en la portada ---
+      \titlegraphic{\includegraphics[width=3cm]{Colmex_logo.jpeg}}
+
+      % --- Footer personalizado con franjas redistribuidas ---
+      \makeatletter
+      \defbeamertemplate*{footline}{custom in head/foot}{
+        \leavevmode
+        \hbox{%
+          \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.5ex,dp=1.5ex,left]{author in head/foot}%
+            \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.25\paperwidth,ht=2.5ex,dp=1.5ex,center]{title in head/foot}%
+            \usebeamerfont{title in head/foot}\insertshorttitle
+          \end{beamercolorbox}%
+          \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1.5ex,right]{date in head/foot}%
+            \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}\insertframenumber{} / \inserttotalframenumber\hspace*{2ex}%
+          \end{beamercolorbox}%
+        }%
+        \vskip0pt
+      }
+      \makeatother
+---
+
+# Presentación del laboratorio 
+
+- Soy Carlos Molina, **CP**RI22 en el CIDE.
+- [**¡IMPORTATE!**]{.underline} email: carlos.e.molinaberumen@outlook.com
+
+Objetivos de este taller: 
+
+- Aprenderemos a usar R.
+- Aplicaremos y reforzaremos los conceptos que vemos en clase de Métodos Cuantitativos. 
+
+---
+
+De manera rápida, díganme:
+
+- Nombre y apellido (y cómo les gusta que se dirijan a ustedes)
+- De dónde vienen
+- RR. II. o PAP
+- ¿Cómo se han sentido con la clase? ¿Hay temas que les gustaría reforzar?
+
+---
+
+- Nos veremos por seis sesiones
+- Viernes de 13:30 a 15:00 hrs 
+- Salón: 
+
+# R
+ 
+R es un lenguaje de programación basado en objetos creado por estadísticos de Nueva Zelanda. 
+Se llama R como una pequeña referencia a otro lenguaje de programación llamado "S"
+
+Hay quienes encuentran más facil programar y utilizar; no obstante, usaremos R studio porque es una forma más sencilla, más amigable y más interactiva de utlizar R. 
+
+# Primeros pasos
+
+Para comenzar a programar, necesitamos dos cosas: Un proyecto y un script.
+
+---
+
+# ¿Script? ¿Proyecto? ¿Qué es eso?
+
+Todo lo que programamos en R lo guardamos usualmente en un script, y esos scripts van guardados en un proyecto. 
+
+El proyecto es la "carpeta madre" de todo lo que trabajes en R. En esa carpeta guardarás todo lo que precisas para alguna tarea (bases de datos, imágenes, codebooks, **SCRiPTS** etc.)
+
+El *Script* es un archivo .R. Es el equivalente al .docx de Word, o al .ppt de PowerPoint. En este script guardarás tu código. 
+
+---
+
+- Crear un proyecto: Esquina superior izquierda, click en la R dentro de una caja traslucida. Escojan "New project"
+
+```{r, out.width="60%"}
+knitr::include_graphics("Proyecto.png")
+```
+---
+
+- New directory: sigan los mismos pasos para crear una carpeta normal. Escojan un path donde quieran que esté su carpeta. Nombren a su proyecto "Lab 1".
+
+- La esquina superior derecha indica que ya están dentro se su proyecto. Pueden acceder a él siguiendo el path que escogieron en cualquier otro momento.
+
+---
+Ya que estamos dentro de nuestro proyecto, es momento de crear nuestro primer script. 
+
+- Opción 1: Shift + Command + N en Mac, Ctrl + Shift + N en Windows 
+
+- Opción 2: Cuadrito blanco en la esquina superior izquierda, luego "R Script"
+
+# ¿Qué es cada cosa? ¿Por qué tengo cuatro pantallas?
+
+```{r, out.width="75%"}
+knitr::include_graphics("Pantalla R.png")
+```
+---
+
+# ¿Qué es cada cosa? ¿Por qué tengo cuatro pantallas?
+
+**Consola**  Tu "chat" con R. Donde se ejecutan los comandos y R te devuelve resultados. NO escribas tus comandos en la consola, pues lo que se hace en la consola se pierde. Piensalo como una hoja para hacer un borrador antes de un examen de matemáticas.
+
+**Editor:** Tu bloc de notas donde escribes tus comandos y los guardas para ejecutarlos después. *OJO*: Siempre escribe tus comandos en tu script (con algunas excepciones).
+
+---
+
+# ¿Qué es cada cosa? ¿Por qué tengo cuatro pantallas?
+
+**Environment:**  Mientras usas R, vas a crear muchas cosas. Todo lo que creas en R (Objetos, vectores, bases de datos, etc.) Se vera en tu environment. Es como un estante.
+
+**Archivos:** Usualmente trabajaremos con ptoyectos. Un proyecto es una carpeta que crea R en la que guardas tu código, los archivos que crees para trabajar fuera de R y los archivos que necesites para trabajar dentro de R. **Ver pestañas**
+
+---
+
+Ya dentro del Script, empezaremos con los coneptos básicos de R. 
+
+Imagina que estás construyendo una casa. Necesitas de muchos materiales para poder construir la casa que deseas. Necesitas herramientas. Necesitas crear cosas para tu casa. 
+
+---
+
+R base (Es decir, el R que ya tiene instalado tu computadora) ya te proporciona varias herramientas básicas. A estas herramientas básicas les llamaremos *Comandos*. R base trae todas les herramientas tradicionales que hay en una casa: martillo, desarmador, taladro, etc.
+
+---
+
+# ¿Qué herramientas me da R base?
+
+Aritmética básica
+
+``` {r}
+  2+1
+  2-1
+  2*2
+```
+
+---
+
+# ¿Qué herramientas me da R base?
+
+Aritmética básica
+
+``` {r}
+  2/2
+  2^2
+  sqrt(4)
+```
+
+---
+
+# ¿Qué herramientas me da R base?
+
+También me da operadores lógicos. ¿Es verdad o es falso?
+
+``` {r}
+  1 == 1
+  2 == 1
+  2 != 1 
+  
+  2 <= 1
+```
+
+---
+
+```{r}
+2 < 2
+2 < 10
+  
+2 > 3
+2 > 1
+```
+
+---
+
+```{r}
+2 <= 1
+2 <= 2
+
+3 >= 4
+3 >= 1
+```
+
+# Objetos
+
+La herramienta principal de R: **Los Objetos**
+
+Un objeto es la "data structure" fundamental de r: es un texto que puede contener lo que sea.
+
+Piensenlo como un tupper donde puedes guardar muchas cosas
+
+El objeto se crea con esta lógica:
+
+nombre_del_objeto <- cosa, o bien nombre_del_objeto = cosa
+
+---
+
+Por ejemplo, texto: 
+
+```{r}
+perrito <- "firulais"
+
+perrito
+```
+
+¿Cambió algo en su pantalla? ¿Qué cambió? 
+Recuerden siempre correr sus líneas de código con command + enter.
+
+---
+
+Los objetos no se limitan a guardar una cosa, pueden guardar varias al mismo tiempo
+
+```{r}
+gatos = c("morris", "dante")
+gatos[c(2)]
+```
+
+y también, números.
+
+```{r}
+five <- c(1, 2, 3, 4, 5)
+one_to_five <- c(1:5) 
+```
+
+---
+
+Podemos sumar objetos
+
+```{r}
+estudiantes_pap <- 7
+estudiantes_ri <- 9
+estudiantes <- estudiantes_ri + estudiantes_pap
+estudiantes
+```
+
+
+---
+
+Estas y otras herramientas están incluidas en la caja nos da R base. pero, ¿Qué pasa si necesito cortar madera para construir una mesa y no tengo los materiales necesarios? 
+
+Así como en la vida real, en R podemos pedir nuevas "cajas" que nos dan herramientas nuevas. Ellas se llaman **librerías**.
+
+Pero primero las tenemor que "Comprar" o instalar en nuestro equipo
+
+---
+
+```{r}
+#install.packages(fivethirtyeight)
+
+library(fivethirtyeight)
+```
+Installamos "fivethirtyeight", que es una librería que nos da acceso a los datos publicados por la empresa. OJO: las herramientas de la librería no funcionan si no llamas a la libería antes.
+
+Para más info, vean help(fivethirtyeight) o vean la pestaña de help.
+
+---
+
+Así como un objeto puede contener palabras, números o niveles, puede tener bases de datos.
+```{r}
+trump <- trumpworld_issues
+```
+
+---
+
+```{r, eval=FALSE}
+View(trump)
+```
+"trump" es un objeto que contiene una base de datos de 185 observaciones de 6 variables. 
+
+---
+
+# Exploremos nuestra base de datos
+
+```{r}
+head(trump, n = 3) #Las primeras tres observaciones de la BDD
+tail(trump, n = 3) #Las últimas tres observaciones de la BDD
+```
+
+---
+
+```{r}
+names(trump)  #Qué variables hay
+nrow(trump) #Cuántas observaciones hay
+ncol(trump) #Cuántas variables hay
+```
+
+---
+
+También podemos obtener una muy buena descripción con:
+```{r}
+#install.packager(Hmisc)
+library(Hmisc)
+Hmisc::describe(trump)
+```
+ 
+---
+
+¿Qué valores puede tomar cada variable de mi base?
+```{r}
+unique(trump$country)
+```
+
+---
+
+Creemos una nueva variable.
+
+Si en un país la aprobación sobre un issue de trump es mayor a 0, hagamos una variable lógica. 
+
+```{r}
+trump$liked <- (trump$net_approval > 0)
+```
+
+¿Cuántas observaciones hay en las que trump sí sea gustado?
+
+```{r}
+library(dplyr)
+count(trump, liked)
+```
+
