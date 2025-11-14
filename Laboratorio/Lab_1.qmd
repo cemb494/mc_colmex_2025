@@ -1,0 +1,94 @@
+---
+title: "Ejercicio 1"
+subtitle: "Métodos Cuantitativos - Colmex"
+author: "Molina Berumen Carlos Eduardo"
+format: pdf
+editor: visual
+lang: es
+date: today
+date-format: full
+papersize: letter
+echo: TRUE
+warning: FALSE
+message: FALSE
+---
+
+# Instrucciones
+
+Responde a las siguientes preguntas y muestra el código que uilizaste para ello. Entrega tu documento en formato .pdf. 
+
+**Sugerencia:** Hagan su documento en un documento "quarto" .qmd y rendericen en documento en .pdf. Recuerden correr las siguientes líneas de codigo en la consola una sola vez (es decir fuera del .qmd o de un script). O, si lo prefieren, sigan el siguiente tutorial para saber cómo renderizar el documento. https://youtu.be/OUWOx80eJqk?si=oRlnwNTTJBYJ-5SP 
+
+**OJO:** Las líneas de código que ocupan deben estar escritas dentro de un *chunk*. Pueden agregar un chunk usando Command + option + I o en la pequeña "C" con un "+" en un cuadro verde que aparece en la parte superior del .qmd. Dentro del chunk **solo** puede haber código. EL resto de sus respuestas en texto deben ir fuera del chunk. SI requieren ayuda, sugiero el siguiente video https://youtu.be/tDw3pTtLnp4?si=hjXjYE4ubhYYIgYD 
+
+```{r, eval = F}
+install.packages("tinytex")
+tinytex::install_tinytex()
+```
+
+## 1. ¿Qué está haciendo el siguiente código? Describe, además, cada parte del código. 
+
+```{r}
+colores <- c("rojo", "verde", "amarillo", "azul")
+
+library(dplyr)
+```
+
+
+## 2. Importa los datos hate_crimes de la librería fivethirthyeight.
+
+```{r}
+library(fivethirtyeight)
+data <- hate_crimes
+```
+
+### a) ¿Qué datos contiene la base de datos?
+
+### b) ¿Cuántas observaciones tiene? ¿Cuántas variables?
+
+### c) Saca los estadísticos descriptivos de la variable share_vote_trump (media, mediana, moda, varianza )
+
+## 3.  El siguiente código de R, escrito sin pipes, calcula la media del ingreso familiar mediano (median_household_income) para todos los estados que tienen una tasa promedio de crímenes de odio del FBI superior a 3.0 por cada 100,000 habitantes.
+
+```{r}
+datos_filtrados <-data[data$avg_hatecrimes_per_100k_fbi > 3.0, ]
+media_ingreso <- mean(datos_filtrados$median_house_inc, na.rm = TRUE)
+print(media_ingreso)
+```
+
+Traduce este código a una única secuencia de pipas (%>%) que comience con el objeto data y utilice las funciones filter(), summarize() o pull(). El resultado final debe ser el mismo valor de la media.
+
+## 4. Importa los datos PRES_2024.csv (Bonus: descarga tú misma los datos desde la página del INE de los cómputos distritales de 2024 https://computos2024.ine.mx/presidencia/base-de-datos). Sigue el siguiente código. Haz un histograma que presente la distribución de el total de votos calculados en 2024. Recuerda: debes hacer una buena gráfica.
+
+```{r}
+library(readr)
+ine <- read_delim("PRES_2024.csv", delim = "|", skip = 6)
+
+#Recuerda guardar tanto tu .qmd como tu 
+#.csv en la misma carpeta para que funcione el código
+```
+## 5. Queremos saber si las casillas urbanas y no urbanas votaron igual o diferente por Morena (solo morena, sin observar coaliciones) en 2024. Prueba esto mediante una prueba de hipótesis. Establece claramente cuáles son tus hipótesis alternativa y nula. Recuerda que tu variable debe ser numerica. 
+
+```{r}
+ine$MORENA <- as.numeric(ine$MORENA)
+```
+
+```{r, include = F}
+ine_urbana <- ine %>% 
+  filter(CASILLA == "Urbana")
+
+ine_no_urbana <- ine %>% 
+  filter(CASILLA == "No Urbana")
+
+t.test(ine_urbana$MORENA, ine_no_urbana$MORENA, 
+       alternative = "two.sided")
+
+```
+## BONUS: quiero saber si las casillas no urbanas votaron más por morena o no. Familiarizate con la función t.test y explora a qué se refiere el argumento "alternative". Haz el t.test con la alternativa correcta para probar nuestra hipótesis y determina si rechazamos nuestra hipótesis alternativa o nuestra hipótesis nula. 
+
+```{r, include = F}
+
+t.test(ine_urbana$MORENA, ine_no_urbana$MORENA, 
+       alternative = "greater")
+```
+
